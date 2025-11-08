@@ -137,7 +137,7 @@ build:
         fi
 
 image:
-  repository: docker.io/mereb/svc-auth
+  repository: registry.leultewolde.com/mereb/svc-auth
   context: .
   dockerfile: Dockerfile
   tagStrategy: branch-sha
