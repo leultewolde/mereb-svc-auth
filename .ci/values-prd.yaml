@@ -1,0 +1,56 @@
+nameOverride: svc-auth
+
+replicaCount: 3
+
+image:
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: SERVICE_NAME
+      value: svc-auth
+  envFrom:
+    - configMapRef:
+        name: svc-auth-prd-config
+    - secretRef:
+        name: svc-auth-prd-secrets
+        optional: true
+
+service:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      containerPort: 4010
+
+ingress:
+  enabled: true
+  className: kong
+  annotations:
+    kubernetes.io/ingress.class: kong
+    cert-manager.io/cluster-issuer: letsencrypt-http
+  hosts:
+    - host: auth.mereb.social
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: http
+  tls:
+    - secretName: auth-prd-tls
+      hosts:
+        - auth.mereb.social
+
+configMap:
+  enabled: true
+  nameOverride: svc-auth-prd-config
+  data:
+    PORT: "4010"
+    OIDC_ISSUER: https://idp.mereb.social/realms/mereb
+    OIDC_AUDIENCE: mereb
+
+resources:
+  requests:
+    cpu: 150m
+    memory: 192Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi

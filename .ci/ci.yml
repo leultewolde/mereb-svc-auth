@@ -1,0 +1,141 @@
+version: 1
+preset: node
+
+env:
+  SERVICE_DIR: services/svc-auth
+  PACKAGE_NAME: "@services/svc-auth"
+
+build:
+  stages:
+    - name: Install dependencies
+      sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        if [ -f .ci/env.sh ]; then
+          . .ci/env.sh
+        fi
+
+        PKG_DIR="${SERVICE_DIR:-services/svc-auth}"
+        if [ ! -d "${PKG_DIR}" ]; then
+          PKG_DIR="."
+        fi
+
+        run_install() {
+          local lock_path="$1"
+          if [ -f "${lock_path}" ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install --no-frozen-lockfile
+          fi
+        }
+
+        if [ -f pnpm-workspace.yaml ]; then
+          run_install "pnpm-lock.yaml"
+        else
+          pushd "${PKG_DIR}" >/dev/null
+          run_install "pnpm-lock.yaml"
+          popd >/dev/null
+        fi
+    - name: Lint service sources
+      sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        if [ -f .ci/env.sh ]; then
+          . .ci/env.sh
+        fi
+
+        PKG_DIR="${SERVICE_DIR:-services/svc-auth}"
+        if [ ! -d "${PKG_DIR}" ]; then
+          PKG_DIR="."
+        fi
+
+        if [ -f pnpm-workspace.yaml ]; then
+          pnpm --filter "${PACKAGE_NAME}" lint
+        else
+          pushd "${PKG_DIR}" >/dev/null
+          pnpm lint
+          popd >/dev/null
+        fi
+    - name: Build service package
+      sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        if [ -f .ci/env.sh ]; then
+          . .ci/env.sh
+        fi
+
+        PKG_DIR="${SERVICE_DIR:-services/svc-auth}"
+        if [ ! -d "${PKG_DIR}" ]; then
+          PKG_DIR="."
+        fi
+
+        if [ -f pnpm-workspace.yaml ]; then
+          pnpm --filter "${PACKAGE_NAME}" build
+        else
+          pushd "${PKG_DIR}" >/dev/null
+          pnpm build
+          popd >/dev/null
+        fi
+
+image:
+  repository: docker.io/mereb/svc-auth
+  context: .
+  dockerfile: Dockerfile
+  tagStrategy: branch-sha
+  push:
+    enabled: true
+    when: '!pr'
+
+deploy:
+  order:
+    - dev
+    - stg
+    - prd
+
+  dev:
+    release: svc-auth-dev
+    namespace: apps-dev
+    chart: hidmo/app-chart
+    repo: https://helm.hidmo.local
+    valuesFiles:
+      - .ci/values-dev.yaml
+    when: branch=main & !pr
+    autoPromote: true
+    smoke:
+      url: https://auth.dev.mereb.social/healthz
+
+  stg:
+    release: svc-auth-stg
+    namespace: apps-stg
+    chart: hidmo/app-chart
+    repo: https://helm.hidmo.local
+    valuesFiles:
+      - .ci/values-stg.yaml
+    when: branch=main & !pr
+    autoPromote: false
+    approval:
+      message: "Promote svc-auth deployment to staging?"
+      submitter: release-managers
+    smoke:
+      url: https://auth.stg.mereb.social/healthz
+
+  prd:
+    release: svc-auth
+    namespace: apps-prd
+    chart: hidmo/app-chart
+    repo: https://helm.hidmo.local
+    valuesFiles:
+      - .ci/values-prd.yaml
+    when: tag=^v[0-9].*
+    autoPromote: false
+    approval:
+      message: "Deploy svc-auth to production?"
+      submitter: release-managers
+    smoke:
+      url: https://auth.mereb.social/healthz
+
+signing:
+  enabled: false

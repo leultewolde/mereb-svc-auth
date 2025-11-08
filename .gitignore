@@ -1,0 +1,14 @@
+# Node / build artifacts
+node_modules/
+dist/
+tsconfig.tsbuildinfo
+
+# Logs & debug
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Local env/config
+.env
+.DS_Store
+/.idea/
