@@ -157,7 +157,7 @@ deploy:
     release: svc-auth-dev
     namespace: apps-dev
     chart: hidmo/app-chart
-    repo: https://helm.hidmo.local
+    repo: https://charts.leultewolde.com
     valuesFiles:
       - .ci/values-dev.yaml
     when: branch=main & !pr
@@ -169,7 +169,7 @@ deploy:
     release: svc-auth-stg
     namespace: apps-stg
     chart: hidmo/app-chart
-    repo: https://helm.hidmo.local
+    repo: https://charts.leultewolde.com
     valuesFiles:
       - .ci/values-stg.yaml
     when: branch=main & !pr
@@ -184,7 +184,7 @@ deploy:
     release: svc-auth
     namespace: apps-prd
     chart: hidmo/app-chart
-    repo: https://helm.hidmo.local
+    repo: https://charts.leultewolde.com
     valuesFiles:
       - .ci/values-prd.yaml
     when: tag=^v[0-9].*
