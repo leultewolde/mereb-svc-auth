@@ -2,6 +2,9 @@ nameOverride: svc-auth
 
 replicaCount: 2
 
+imagePullSecrets:
+  - name: regcred
+
 image:
   env:
     - name: NODE_ENV
