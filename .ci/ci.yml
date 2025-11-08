@@ -156,7 +156,7 @@ deploy:
   dev:
     release: svc-auth-dev
     namespace: apps-dev
-    chart: hidmo/app-chart
+    chart: app-chart
     repo: https://charts.leultewolde.com
     repoCredentialId: helm-chart-creds
     valuesFiles:
