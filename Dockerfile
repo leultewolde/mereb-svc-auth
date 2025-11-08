@@ -3,14 +3,13 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY services/svc-auth/package.json services/svc-auth/
+COPY package.json pnpm-lock.yaml ./
+COPY src src
+COPY tsconfig.base.json tsconfig.base.json
+COPY tsconfig.json tsconfig.json
+COPY tsconfig.eslint.json tsconfig.eslint.json
 
-RUN corepack enable && pnpm install --frozen-lockfile --filter @services/svc-auth
+RUN corepack enable && pnpm install --frozen-lockfile
+RUN pnpm run build
 
-COPY services/svc-auth services/svc-auth
-COPY tsconfig.base.json ./
-
-RUN pnpm --filter @services/svc-auth build
-
-CMD ["node", "services/svc-auth/dist/index.js"]
+CMD ["node", "dist/index.js"]
