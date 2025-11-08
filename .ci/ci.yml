@@ -144,7 +144,7 @@ image:
   push:
     enabled: true
     when: '!pr'
-    credentialsId: docker-registry-hub
+    credentialsId: docker-registry-local
 
 deploy:
   order:
