@@ -169,7 +169,7 @@ deploy:
   stg:
     release: svc-auth-stg
     namespace: apps-stg
-    chart: hidmo/app-chart
+    chart: app-chart
     repo: https://charts.leultewolde.com
     repoCredentialId: helm-chart-creds
     valuesFiles:
@@ -185,7 +185,7 @@ deploy:
   prd:
     release: svc-auth
     namespace: apps-prd
-    chart: hidmo/app-chart
+    chart: app-chart
     repo: https://charts.leultewolde.com
     repoCredentialId: helm-chart-creds
     valuesFiles:
