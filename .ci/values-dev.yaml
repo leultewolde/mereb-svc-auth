@@ -2,9 +2,6 @@ nameOverride: svc-auth
 
 replicaCount: 1
 
-imagePullSecrets:
-  - name: regcred
-
 image:
   repository: registry.leultewolde.com/mereb/svc-auth
   env:
@@ -18,6 +15,9 @@ image:
     - secretRef:
         name: svc-auth-dev-secrets
         optional: true
+
+imagePullSecrets:
+  - name: regcred
 
 service:
   ports:
