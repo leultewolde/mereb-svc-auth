@@ -17,7 +17,7 @@ image:
         optional: true
 
 imagePullSecrets:
-  - name: regcred
+  - regcred
 
 service:
   ports:
