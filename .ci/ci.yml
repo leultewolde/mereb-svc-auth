@@ -7,6 +7,62 @@ env:
 
 build:
   stages:
+    - name: Bootstrap Node runtime
+      sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        mkdir -p .ci
+
+        if command -v node >/dev/null 2>&1; then
+          echo "Detected preinstalled Node at $(command -v node)"
+          NODE_BIN_DIR="$(dirname "$(command -v node)")"
+          printf 'export PATH="%s:$PATH"\n' "${NODE_BIN_DIR}" > .ci/env.sh
+          chmod +x .ci/env.sh
+          exit 0
+        fi
+
+        NODE_VERSION="${NODE_VERSION:-20.19.2}"
+        NODE_DIST="node-v${NODE_VERSION}-linux-x64"
+        NODE_ARCHIVE="${NODE_DIST}.tar.xz"
+        NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/${NODE_ARCHIVE}"
+        NODE_DIR=".ci/${NODE_DIST}"
+
+        if [ ! -d "${NODE_DIR}" ]; then
+          echo "Downloading Node.js ${NODE_VERSION} from ${NODE_URL}"
+          curl -fsSL "${NODE_URL}" -o ".ci/${NODE_ARCHIVE}"
+          tar -xJf ".ci/${NODE_ARCHIVE}" -C .ci
+        fi
+
+        NODE_BIN_DIR="$(pwd)/${NODE_DIR}/bin"
+        printf 'export PATH="%s:$PATH"\n' "${NODE_BIN_DIR}" > .ci/env.sh
+        chmod +x .ci/env.sh
+        echo "Node.js $(. .ci/env.sh && node -v) bootstrapped into ${NODE_DIR}"
+    - name: Prepare pnpm
+      sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        if [ -f .ci/env.sh ]; then
+          . .ci/env.sh
+        fi
+
+        if command -v pnpm >/dev/null 2>&1; then
+          pnpm --version
+          exit 0
+        fi
+
+        if command -v corepack >/dev/null 2>&1; then
+          corepack enable
+          corepack prepare pnpm@9.0.0 --activate
+        elif command -v npm >/dev/null 2>&1; then
+          npm install -g pnpm@9.0.0
+        else
+          echo "Neither pnpm, corepack, nor npm are available on this agent." >&2
+          exit 1
+        fi
+
+        pnpm --version
     - name: Install dependencies
       sh: |
         #!/usr/bin/env bash
