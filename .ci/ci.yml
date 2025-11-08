@@ -158,6 +158,7 @@ deploy:
     namespace: apps-dev
     chart: hidmo/app-chart
     repo: https://charts.leultewolde.com
+    repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-dev.yaml
     when: branch=main & !pr
@@ -170,6 +171,7 @@ deploy:
     namespace: apps-stg
     chart: hidmo/app-chart
     repo: https://charts.leultewolde.com
+    repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-stg.yaml
     when: branch=main & !pr
@@ -185,6 +187,7 @@ deploy:
     namespace: apps-prd
     chart: hidmo/app-chart
     repo: https://charts.leultewolde.com
+    repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-prd.yaml
     when: tag=^v[0-9].*
@@ -197,3 +200,24 @@ deploy:
 
 signing:
   enabled: false
+
+release:
+  autoTag:
+    enabled: true
+    when: branch=main & !pr
+    prefix: v
+    bump: patch
+    remote: origin
+    gitUser: Mereb CI
+    gitEmail: ci@mereb.dev
+    credentialId: github-credentials
+    clean: false
+    allowDirty: true
+    skipIfTagged: true
+  github:
+    enabled: true
+    when: '!pr'
+    repo: leultewolde/mereb-svc-auth
+    stageName: GitHub Release
+    credentialId: github-credentials
+    generateReleaseNotes: true
