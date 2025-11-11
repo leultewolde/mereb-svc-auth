@@ -164,7 +164,7 @@ deploy:
     when: branch=main & !pr
     autoPromote: true
     smoke:
-      url: https://auth.dev.mereb.social/healthz
+      url: https://api-dev.mereb.app/auth/healthz
 
   stg:
     release: svc-auth-stg
@@ -180,7 +180,7 @@ deploy:
       message: "Promote svc-auth deployment to staging?"
       submitter: release-managers
     smoke:
-      url: https://auth.stg.mereb.social/healthz
+      url: https://api-stg.mereb.app/auth/healthz
 
   prd:
     release: svc-auth
@@ -196,7 +196,7 @@ deploy:
       message: "Deploy svc-auth to production?"
       submitter: release-managers
     smoke:
-      url: https://auth.mereb.social/healthz
+      url: https://api.mereb.app/auth/healthz
 
 signing:
   enabled: false

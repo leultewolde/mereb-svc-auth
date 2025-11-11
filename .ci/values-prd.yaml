@@ -32,7 +32,7 @@ ingress:
     kubernetes.io/ingress.class: kong
     cert-manager.io/cluster-issuer: letsencrypt-http
   hosts:
-    - host: auth.mereb.social
+    - host: api.mereb.app
       paths:
         - path: /
           pathType: Prefix
@@ -40,7 +40,7 @@ ingress:
   tls:
     - secretName: auth-prd-tls
       hosts:
-        - auth.mereb.social
+        - api.mereb.app
 
 configMap:
   enabled: true
