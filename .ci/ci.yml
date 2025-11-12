@@ -175,9 +175,10 @@ deploy:
     valuesFiles:
       - .ci/values-stg.yaml
     when: branch=main & !pr
-    autoPromote: false
+    autoPromote: true
     approval:
-      message: "Promote svc-auth deployment to staging?"
+      before: true
+      message: "Deploy svc-auth to staging?"
       submitter: release-managers
     smoke:
       url: https://api-stg.mereb.app/auth/healthz
@@ -214,6 +215,7 @@ release:
     clean: false
     allowDirty: true
     skipIfTagged: true
+    afterEnvironment: stg
   github:
     enabled: true
     when: tag=^v[0-9].*
