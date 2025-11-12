@@ -216,7 +216,7 @@ release:
     skipIfTagged: true
   github:
     enabled: true
-    when: '!pr'
+    when: tag=^v[0-9].*
     repo: leultewolde/mereb-svc-auth
     stageName: GitHub Release
     credentialId: github-credentials
