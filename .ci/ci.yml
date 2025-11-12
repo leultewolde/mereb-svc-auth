@@ -4,7 +4,6 @@ preset: node
 build:
   pnpm:
     nodeVersion: 20.19.2
-    packageDir: svc-auth
     packageName: "@services/svc-auth"
     steps:
       - type: lint
