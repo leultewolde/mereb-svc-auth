@@ -32,10 +32,11 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: kong
     cert-manager.io/cluster-issuer: letsencrypt-http
+    konghq.com/strip-path: "true"
   hosts:
     - host: api-dev.mereb.app
       paths:
-        - path: /
+        - path: /auth
           pathType: Prefix
           servicePort: http
   tls:
