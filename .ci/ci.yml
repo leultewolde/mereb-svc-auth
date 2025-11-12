@@ -87,6 +87,7 @@ release:
     gitUser: Mereb CI
     gitEmail: ci@mereb.dev
     credentialId: github-credentials
+    credentialType: string
     clean: false
     allowDirty: true
     skipIfTagged: true
