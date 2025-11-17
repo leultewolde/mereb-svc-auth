@@ -53,8 +53,8 @@ configMap:
 
 resources:
   requests:
-    cpu: 150m
-    memory: 192Mi
+    cpu: 100m
+    memory: 160Mi
   limits:
-    cpu: 400m
-    memory: 512Mi
+    cpu: 300m
+    memory: 384Mi
