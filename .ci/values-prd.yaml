@@ -1,6 +1,6 @@
 nameOverride: svc-auth
 
-replicaCount: 3
+replicaCount: 2
 
 imagePullSecrets:
   - regcred
@@ -58,3 +58,9 @@ resources:
   limits:
     cpu: 300m
     memory: 384Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
