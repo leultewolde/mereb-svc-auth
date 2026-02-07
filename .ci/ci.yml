@@ -16,6 +16,7 @@ image:
   context: .
   dockerfile: Dockerfile
   tagStrategy: branch-sha
+  tagTemplate: "{{tagName}}"
   push:
     enabled: true
     when: '!pr'
@@ -36,6 +37,28 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-dev.yaml
+    valuesTemplates:
+      - template: .ci/templates/values-secret.yaml.tpl
+        output: .ci/.rendered/values-dev.secret.yaml
+        vars:
+          SECRET_NAME: svc-auth-dev-secrets
+          DATABASE_URL:
+            vaultPath: kv/data/apps/dev
+            vaultField: DATABASE_URL
+          SPLUNK_HEC_TOKEN:
+            vaultPath: kv/data/apps/dev
+            vaultField: SPLUNK_HEC_TOKEN
+          KEYCLOAK_CLIENT_SECRET:
+            vaultPath: kv/data/apps/dev
+            vaultField: KEYCLOAK_CLIENT_SECRET
+    vault:
+      url: https://vault.leultewolde.com
+      tokenEnv: VAULT_TOKEN
+      engine: kv2
+    credentials:
+      - type: vaultToken
+        id: vault-credentials
+        env: VAULT_TOKEN
     when: branch=main & !pr
     autoPromote: true
     smoke:
@@ -52,6 +75,28 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-stg.yaml
+    valuesTemplates:
+      - template: .ci/templates/values-secret.yaml.tpl
+        output: .ci/.rendered/values-stg.secret.yaml
+        vars:
+          SECRET_NAME: svc-auth-stg-secrets
+          DATABASE_URL:
+            vaultPath: kv/data/apps/stg
+            vaultField: DATABASE_URL
+          SPLUNK_HEC_TOKEN:
+            vaultPath: kv/data/apps/stg
+            vaultField: SPLUNK_HEC_TOKEN
+          KEYCLOAK_CLIENT_SECRET:
+            vaultPath: kv/data/apps/stg
+            vaultField: KEYCLOAK_CLIENT_SECRET
+    vault:
+      url: https://vault.leultewolde.com
+      tokenEnv: VAULT_TOKEN
+      engine: kv2
+    credentials:
+      - type: vaultToken
+        id: vault-credentials
+        env: VAULT_TOKEN
     when: branch=main & !pr
     autoPromote: true
     approval:
@@ -72,6 +117,28 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-prd.yaml
+    valuesTemplates:
+      - template: .ci/templates/values-secret.yaml.tpl
+        output: .ci/.rendered/values-prd.secret.yaml
+        vars:
+          SECRET_NAME: svc-auth-prd-secrets
+          DATABASE_URL:
+            vaultPath: kv/data/apps/prd
+            vaultField: DATABASE_URL
+          SPLUNK_HEC_TOKEN:
+            vaultPath: kv/data/apps/prd
+            vaultField: SPLUNK_HEC_TOKEN
+          KEYCLOAK_CLIENT_SECRET:
+            vaultPath: kv/data/apps/prd
+            vaultField: KEYCLOAK_CLIENT_SECRET
+    vault:
+      url: https://vault.leultewolde.com
+      tokenEnv: VAULT_TOKEN
+      engine: kv2
+    credentials:
+      - type: vaultToken
+        id: vault-credentials
+        env: VAULT_TOKEN
     when: tag=^v[0-9].*
     autoPromote: false
     approval:

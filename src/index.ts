@@ -1,7 +1,8 @@
 import { buildServer } from './server.js';
-import { getNumberEnv, loadEnv } from '@mereb/shared-packages';
+import { getNumberEnv, initDefaultTelemetry, loadEnv } from '@mereb/shared-packages';
 
 loadEnv();
+initDefaultTelemetry('svc-auth');
 
 const PORT = getNumberEnv('PORT', 4010);
 const HOST = process.env.HOST ?? '0.0.0.0';

@@ -9,6 +9,8 @@ image:
       value: production
     - name: SERVICE_NAME
       value: svc-auth
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: https://otel-collector-dev.mereb.app
   envFrom:
     - configMapRef:
         name: svc-auth-dev-config
@@ -18,6 +20,10 @@ image:
 
 imagePullSecrets:
   - regcred
+
+# Rendered per deploy from Vault
+valuesTemplates:
+  - .ci/.rendered/values-dev.secret.yaml
 
 service:
   ports:
@@ -51,6 +57,8 @@ configMap:
     PORT: "4010"
     OIDC_ISSUER: https://auth.mereb.app/realms/mereb
     OIDC_AUDIENCE: mereb-dev
+    SPLUNK_HEC_URL: https://splunk-hec.mereb.app/services/collector/event
+    SPLUNK_HEC_INDEX: logs-dev
 
 resources:
   requests:
