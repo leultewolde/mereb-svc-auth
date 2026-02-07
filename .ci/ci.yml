@@ -48,9 +48,6 @@ deploy:
           SPLUNK_HEC_TOKEN:
             vaultPath: kv/data/apps/dev
             vaultField: SPLUNK_HEC_TOKEN
-          KEYCLOAK_CLIENT_SECRET:
-            vaultPath: kv/data/apps/dev
-            vaultField: KEYCLOAK_CLIENT_SECRET
     vault:
       url: https://vault.leultewolde.com
       tokenEnv: VAULT_TOKEN
@@ -86,9 +83,6 @@ deploy:
           SPLUNK_HEC_TOKEN:
             vaultPath: kv/data/apps/stg
             vaultField: SPLUNK_HEC_TOKEN
-          KEYCLOAK_CLIENT_SECRET:
-            vaultPath: kv/data/apps/stg
-            vaultField: KEYCLOAK_CLIENT_SECRET
     vault:
       url: https://vault.leultewolde.com
       tokenEnv: VAULT_TOKEN
@@ -128,9 +122,6 @@ deploy:
           SPLUNK_HEC_TOKEN:
             vaultPath: kv/data/apps/prd
             vaultField: SPLUNK_HEC_TOKEN
-          KEYCLOAK_CLIENT_SECRET:
-            vaultPath: kv/data/apps/prd
-            vaultField: KEYCLOAK_CLIENT_SECRET
     vault:
       url: https://vault.leultewolde.com
       tokenEnv: VAULT_TOKEN
