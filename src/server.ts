@@ -8,7 +8,7 @@ loadEnv();
 const logger = createLogger('svc-auth');
 
 export async function buildServer(): Promise<FastifyInstance> {
-  const app = Fastify({ loggerInstance: logger as unknown as FastifyBaseLogger });
+  const app = Fastify({loggerInstance: logger as FastifyBaseLogger});
 
   await app.register(helmet);
   await app.register(cors, { origin: true, credentials: true });
