@@ -12,7 +12,11 @@ image:
     - name: SERVICE_NAME
       value: svc-auth
     - name: OTEL_EXPORTER_OTLP_ENDPOINT
-      value: https://otel-collector.mereb.app
+      value: http://otel-collector.platform-prd.svc.cluster.local:4318
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: http/protobuf
+    - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+      value: http/protobuf
   envFrom:
     - configMapRef:
         name: svc-auth-prd-config
