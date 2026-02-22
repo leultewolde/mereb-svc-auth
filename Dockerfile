@@ -1,4 +1,4 @@
-FROM registry.leultewolde.com/mereb/mereb-node-base:v0.0.3 AS base
+FROM registry.leultewolde.com/mereb/mereb-node-base:v0.0.4 AS base
 
 COPY package.json pnpm-lock.yaml ./
 COPY src src
@@ -6,7 +6,7 @@ COPY tsconfig.base.json tsconfig.base.json
 COPY tsconfig.json tsconfig.json
 COPY tsconfig.eslint.json tsconfig.eslint.json
 
-RUN pnpm install --frozen-lockfile
-RUN pnpm run build
+RUN pnpm install --frozen-lockfile && \
+    pnpm run build
 
 CMD ["node", "dist/index.js"]
