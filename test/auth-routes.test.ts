@@ -1,7 +1,27 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import Fastify from 'fastify';
 import { registerAuthRoutes } from '../src/adapters/inbound/http/auth-routes.js';
+
+test('GET /healthz returns ok', async () => {
+  const app = Fastify();
+  await registerAuthRoutes(app, {
+    verifyBearerToken: {
+      async execute() {
+        throw new Error('should not be called');
+      }
+    }
+  });
+
+  const response = await app.inject({
+    method: 'GET',
+    url: '/healthz'
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), { status: 'ok' });
+  await app.close();
+});
 
 test('POST /verify returns 401 when bearer token missing', async () => {
   const app = Fastify();
