@@ -17,10 +17,10 @@ build:
         name: Typecheck service package
       - type: test
         name: Run unit tests
-        command: test:unit --if-present
+        command: test:unit
       - type: test
         name: Run integration tests
-        command: test:integration --if-present
+        command: test:integration
       - type: build
         name: Build service package
 
