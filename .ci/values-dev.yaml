@@ -2,6 +2,12 @@ nameOverride: svc-auth
 
 replicaCount: 1
 
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+
 image:
   repository: registry.leultewolde.com/mereb/svc-auth
   env:
@@ -66,7 +72,7 @@ configMap:
 
 resources:
   requests:
-    cpu: 25m
+    cpu: 15m
     memory: 96Mi
   limits:
     cpu: 150m
