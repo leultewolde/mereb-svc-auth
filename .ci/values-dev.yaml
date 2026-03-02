@@ -21,6 +21,16 @@ image:
       value: http/protobuf
     - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
       value: http/protobuf
+    - name: OIDC_ISSUER
+      valueFrom:
+        configMapKeyRef:
+          name: platform-identity-dev
+          key: OIDC_ISSUER
+    - name: OIDC_AUDIENCE
+      valueFrom:
+        configMapKeyRef:
+          name: platform-identity-dev
+          key: ENV_API_AUDIENCE
   envFrom:
     - configMapRef:
         name: svc-auth-dev-config
@@ -65,8 +75,6 @@ configMap:
   nameOverride: svc-auth-dev-config
   data:
     PORT: "4010"
-    OIDC_ISSUER: https://auth.mereb.app/realms/mereb
-    OIDC_AUDIENCE: mereb-dev
     SPLUNK_HEC_URL: http://splunk-prd.platform-prd.svc.cluster.local:8088/services/collector/event
     SPLUNK_HEC_INDEX: logs-dev
 
