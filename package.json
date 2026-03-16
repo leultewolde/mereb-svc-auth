@@ -20,7 +20,7 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@mereb/shared-packages": "0.0.42",
+    "@mereb/shared-packages": "0.0.43",
     "fastify": "5.8.1",
     "@fastify/cors": "^11.2.0",
     "@fastify/helmet": "^13.0.2",
