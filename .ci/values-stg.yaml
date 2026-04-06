@@ -32,11 +32,41 @@ image:
         name: svc-auth-stg-config
     - secretRef:
         name: svc-auth-stg-secrets
-        optional: true
+        optional: false
 
-# Rendered per deploy from Vault
-valuesTemplates:
-  - .ci/.rendered/values-stg.secret.yaml
+vaultSecretsOperator:
+  enabled: true
+  auth:
+    create: true
+    spec:
+      vaultAuthGlobalRef:
+        name: mereb-apps-stg
+        namespace: vault-secrets-operator
+      kubernetes:
+        role: apps-stg-svc-auth
+      mount: kubernetes-stg
+  staticSecrets:
+    - name: svc-auth-runtime
+      spec:
+        type: kv-v2
+        mount: kv
+        path: apps/stg
+        refreshAfter: 5m
+        destination:
+          name: svc-auth-stg-secrets
+          create: true
+          overwrite: true
+          transformation:
+            excludes:
+              - .*
+            templates:
+              DATABASE_URL:
+                text: '{{- get .Secrets "DATABASE_URL" -}}'
+              SPLUNK_HEC_TOKEN:
+                text: '{{- get .Secrets "SPLUNK_HEC_TOKEN" -}}'
+        rolloutRestartTargets:
+          - kind: Deployment
+            name: svc-auth-stg
 
 service:
   ports:

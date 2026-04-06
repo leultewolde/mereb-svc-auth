@@ -1,4 +1,5 @@
 version: 1
+recipe: service
 preset: node
 
 delivery:
@@ -50,25 +51,6 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-dev.yaml
-    valuesTemplates:
-      - template: .ci/templates/values-secret.yaml.tpl
-        output: .ci/.rendered/values-dev.secret.yaml
-        vars:
-          SECRET_NAME: svc-auth-dev-secrets
-          DATABASE_URL:
-            vaultPath: kv/data/apps/dev
-            vaultField: DATABASE_URL
-          SPLUNK_HEC_TOKEN:
-            vaultPath: kv/data/apps/dev
-            vaultField: SPLUNK_HEC_TOKEN
-    vault:
-      url: https://vault.leultewolde.com
-      tokenEnv: VAULT_TOKEN
-      engine: kv2
-    credentials:
-      - type: vaultToken
-        id: vault-credentials
-        env: VAULT_TOKEN
     smoke:
       url: https://api-dev.mereb.app/auth/healthz
       retries: 3
@@ -83,25 +65,6 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-stg.yaml
-    valuesTemplates:
-      - template: .ci/templates/values-secret.yaml.tpl
-        output: .ci/.rendered/values-stg.secret.yaml
-        vars:
-          SECRET_NAME: svc-auth-stg-secrets
-          DATABASE_URL:
-            vaultPath: kv/data/apps/stg
-            vaultField: DATABASE_URL
-          SPLUNK_HEC_TOKEN:
-            vaultPath: kv/data/apps/stg
-            vaultField: SPLUNK_HEC_TOKEN
-    vault:
-      url: https://vault.leultewolde.com
-      tokenEnv: VAULT_TOKEN
-      engine: kv2
-    credentials:
-      - type: vaultToken
-        id: vault-credentials
-        env: VAULT_TOKEN
     smoke:
       url: https://api-stg.mereb.app/auth/healthz
       retries: 3
@@ -116,25 +79,6 @@ deploy:
     repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-prd.yaml
-    valuesTemplates:
-      - template: .ci/templates/values-secret.yaml.tpl
-        output: .ci/.rendered/values-prd.secret.yaml
-        vars:
-          SECRET_NAME: svc-auth-prd-secrets
-          DATABASE_URL:
-            vaultPath: kv/data/apps/prd
-            vaultField: DATABASE_URL
-          SPLUNK_HEC_TOKEN:
-            vaultPath: kv/data/apps/prd
-            vaultField: SPLUNK_HEC_TOKEN
-    vault:
-      url: https://vault.leultewolde.com
-      tokenEnv: VAULT_TOKEN
-      engine: kv2
-    credentials:
-      - type: vaultToken
-        id: vault-credentials
-        env: VAULT_TOKEN
     smoke:
       url: https://api.mereb.app/auth/healthz
       retries: 3

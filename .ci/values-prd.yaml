@@ -38,11 +38,41 @@ image:
         name: svc-auth-prd-config
     - secretRef:
         name: svc-auth-prd-secrets
-        optional: true
+        optional: false
 
-# Rendered per deploy from Vault
-valuesTemplates:
-  - .ci/.rendered/values-prd.secret.yaml
+vaultSecretsOperator:
+  enabled: true
+  auth:
+    create: true
+    spec:
+      vaultAuthGlobalRef:
+        name: mereb-apps-prd
+        namespace: vault-secrets-operator
+      kubernetes:
+        role: apps-prd-svc-auth
+      mount: kubernetes-prd
+  staticSecrets:
+    - name: svc-auth-runtime
+      spec:
+        type: kv-v2
+        mount: kv
+        path: apps/prd
+        refreshAfter: 5m
+        destination:
+          name: svc-auth-prd-secrets
+          create: true
+          overwrite: true
+          transformation:
+            excludes:
+              - .*
+            templates:
+              DATABASE_URL:
+                text: '{{- get .Secrets "DATABASE_URL" -}}'
+              SPLUNK_HEC_TOKEN:
+                text: '{{- get .Secrets "SPLUNK_HEC_TOKEN" -}}'
+        rolloutRestartTargets:
+          - kind: Deployment
+            name: svc-auth
 
 service:
   ports:

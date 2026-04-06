@@ -13,3 +13,4 @@ yarn-debug.log*
 .DS_Store
 /.idea/
 /coverage/
+.ci/.rendered/
