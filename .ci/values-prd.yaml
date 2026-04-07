@@ -1,5 +1,3 @@
-nameOverride: svc-auth
-
 replicaCount: 2
 
 deploymentStrategy:
@@ -8,100 +6,7 @@ deploymentStrategy:
     maxSurge: 0
     maxUnavailable: 1
 
-imagePullSecrets:
-  - regcred
-
-image:
-  env:
-    - name: NODE_ENV
-      value: production
-    - name: SERVICE_NAME
-      value: svc-auth
-    - name: OTEL_EXPORTER_OTLP_ENDPOINT
-      value: http://otel-collector.platform-prd.svc.cluster.local:4318
-    - name: OTEL_EXPORTER_OTLP_PROTOCOL
-      value: http/protobuf
-    - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-      value: http/protobuf
-    - name: OIDC_ISSUER
-      valueFrom:
-        configMapKeyRef:
-          name: platform-identity-prd
-          key: OIDC_ISSUER
-    - name: OIDC_AUDIENCE
-      valueFrom:
-        configMapKeyRef:
-          name: platform-identity-prd
-          key: ENV_API_AUDIENCE
-  envFrom:
-    - configMapRef:
-        name: svc-auth-prd-config
-    - secretRef:
-        name: svc-auth-prd-secrets
-        optional: false
-
-vaultSecretsOperator:
-  enabled: true
-  auth:
-    create: true
-    spec:
-      vaultAuthGlobalRef:
-        name: mereb-apps-prd
-        namespace: vault-secrets-operator
-      kubernetes:
-        role: apps-prd-svc-auth
-      mount: kubernetes-prd
-  staticSecrets:
-    - name: svc-auth-runtime
-      spec:
-        type: kv-v2
-        mount: kv
-        path: apps/prd
-        refreshAfter: 5m
-        destination:
-          name: svc-auth-prd-secrets
-          create: true
-          overwrite: true
-          transformation:
-            excludes:
-              - .*
-            templates:
-              DATABASE_URL:
-                text: '{{- get .Secrets "DATABASE_URL" -}}'
-              SPLUNK_HEC_TOKEN:
-                text: '{{- get .Secrets "SPLUNK_HEC_TOKEN" -}}'
-        rolloutRestartTargets:
-          - kind: Deployment
-            name: svc-auth
-
-service:
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
-      containerPort: 4010
-
-ingress:
-  enabled: true
-  className: kong
-  annotations:
-    kubernetes.io/ingress.class: kong
-    cert-manager.io/cluster-issuer: letsencrypt-http
-    konghq.com/strip-path: "true"
-  hosts:
-    - host: api.mereb.app
-      paths:
-        - path: /auth
-          pathType: Prefix
-          servicePort: http
-  tls:
-    - secretName: auth-prd-tls
-      hosts:
-        - api.mereb.app
-
 configMap:
-  enabled: true
-  nameOverride: svc-auth-prd-config
   data:
     PORT: "4010"
     SPLUNK_HEC_URL: http://splunk-prd.platform-prd.svc.cluster.local:8088/services/collector/event
