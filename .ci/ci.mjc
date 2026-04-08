@@ -43,31 +43,39 @@ deploy:
     - stg
     - prd
 
-  dev:
-    release: svc-auth-dev
-    namespace: apps-dev
+  defaults:
     chart: app-chart
     repo: https://charts.leultewolde.com
     repoCredentialId: helm-chart-creds
+    wait: true
+    atomic: true
+    timeout: 10m
+
+  generatedBaseDefaults:
+    profile: apiService
+    inputs:
+      serviceName: svc-auth
+      containerPort: 4010
+      routePrefix: /auth
+      secretTemplates:
+        DATABASE_URL: DATABASE_URL
+        SPLUNK_HEC_TOKEN: SPLUNK_HEC_TOKEN
+      extraEnv:
+        - name: OIDC_ISSUER
+          fromPlatformIdentityConfigKey: OIDC_ISSUER
+        - name: OIDC_AUDIENCE
+          fromPlatformIdentityConfigKey: ENV_API_AUDIENCE
+
+  dev:
+    release: svc-auth-dev
+    namespace: apps-dev
     valuesFiles:
       - .ci/values-dev.yaml
     generatedBaseValues:
-      profile: apiService
       inputs:
-        serviceName: svc-auth
-        containerPort: 4010
-        routePrefix: /auth
         configMapName: svc-auth-dev-config
         secretName: svc-auth-dev-secrets
         tlsSecretName: auth-dev-tls
-        secretTemplates:
-          DATABASE_URL: DATABASE_URL
-          SPLUNK_HEC_TOKEN: SPLUNK_HEC_TOKEN
-        extraEnv:
-          - name: OIDC_ISSUER
-            fromPlatformIdentityConfigKey: OIDC_ISSUER
-          - name: OIDC_AUDIENCE
-            fromPlatformIdentityConfigKey: ENV_API_AUDIENCE
     smoke:
       url: https://api-dev.mereb.app/auth/healthz
       retries: 3
@@ -77,28 +85,13 @@ deploy:
   stg:
     release: svc-auth-stg
     namespace: apps-stg
-    chart: app-chart
-    repo: https://charts.leultewolde.com
-    repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-stg.yaml
     generatedBaseValues:
-      profile: apiService
       inputs:
-        serviceName: svc-auth
-        containerPort: 4010
-        routePrefix: /auth
         configMapName: svc-auth-stg-config
         secretName: svc-auth-stg-secrets
         tlsSecretName: auth-stg-tls
-        secretTemplates:
-          DATABASE_URL: DATABASE_URL
-          SPLUNK_HEC_TOKEN: SPLUNK_HEC_TOKEN
-        extraEnv:
-          - name: OIDC_ISSUER
-            fromPlatformIdentityConfigKey: OIDC_ISSUER
-          - name: OIDC_AUDIENCE
-            fromPlatformIdentityConfigKey: ENV_API_AUDIENCE
     smoke:
       url: https://api-stg.mereb.app/auth/healthz
       retries: 3
@@ -108,28 +101,13 @@ deploy:
   prd:
     release: svc-auth
     namespace: apps-prd
-    chart: app-chart
-    repo: https://charts.leultewolde.com
-    repoCredentialId: helm-chart-creds
     valuesFiles:
       - .ci/values-prd.yaml
     generatedBaseValues:
-      profile: apiService
       inputs:
-        serviceName: svc-auth
-        containerPort: 4010
-        routePrefix: /auth
         configMapName: svc-auth-prd-config
         secretName: svc-auth-prd-secrets
         tlsSecretName: auth-prd-tls
-        secretTemplates:
-          DATABASE_URL: DATABASE_URL
-          SPLUNK_HEC_TOKEN: SPLUNK_HEC_TOKEN
-        extraEnv:
-          - name: OIDC_ISSUER
-            fromPlatformIdentityConfigKey: OIDC_ISSUER
-          - name: OIDC_AUDIENCE
-            fromPlatformIdentityConfigKey: ENV_API_AUDIENCE
     smoke:
       url: https://api.mereb.app/auth/healthz
       retries: 3
