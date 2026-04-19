@@ -16,7 +16,8 @@ const coverageExclude = [
   'src/*Worker.ts',
   'src/migrate.ts',
   'vitest.config.ts',
-  'vitest.integration.config.ts'
+  'vitest.integration.config.ts',
+  'scripts/refresh-lockfile.mjs'
 ];
 
 export default defineConfig({
